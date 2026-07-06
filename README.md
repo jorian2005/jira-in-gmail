@@ -51,8 +51,10 @@ This architecture keeps credentials out of page context and prevents direct page
 
 ## Key format
 
-- Supported key pattern is strictly: 2 or 3 uppercase letters + `-` + digits.
-- Examples: `AB-123`, `ABC-123`.
+- Supported key pattern is: 2 or 3 uppercase letters + `-` + digits.
+- 2-letter keys are matched normally (example: `AB-123`).
+- 3-letter keys are matched normally as well (example: `CLI-2262`).
+- Jira URLs are also detected for both formats (for example `https://yourcompany.atlassian.net/browse/AB-123` and `https://yourcompany.atlassian.net/browse/CLI-2262`).
 - Maximum displayed keys:
   - Gmail row: 3 keys
   - Calendar event: 3 keys
@@ -60,7 +62,7 @@ This architecture keeps credentials out of page context and prevents direct page
 ## Usage
 
 1. Open Gmail or Google Calendar (refresh tab after install/update).
-2. Make sure the message or event contains a Jira key like `AB-123` or `ABC-123`.
+2. Make sure the message or event contains a Jira key like `AB-123` or `CLI-2262` (plain text or inside a Jira URL).
 3. The extension shows Jira badges with status information.
 4. Click a badge to open the issue in Jira.
 
@@ -85,7 +87,7 @@ No remote analytics, tracking, or telemetry is included.
 ## Known limits
 
 - The extension reads a maximum of 3 unique Jira keys per Gmail row or Calendar event.
-- Key pattern: 2 or 3 letters + `-` + digits, for example `AB-123` or `ABC-123`.
+- Key pattern: 2 or 3 letters + `-` + digits (for example `AB-123` and `CLI-2262`).
 - The extension works on Gmail/Calendar web UI, not in mobile apps.
 
 ## Localization

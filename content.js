@@ -191,9 +191,10 @@ async function processRow(row) {
   const rowText = getRowText(row);
   const keys = extractKeys(rowText);
   const fingerprint = `${keys.join(",")}|${rowText.slice(0, 250)}`;
+  const hasRenderedContainer = !!row.querySelector('.jira-badge-container[data-jira-kind="row"]');
 
   const previous = ROW_STATE.get(row);
-  if (previous && previous.fingerprint === fingerprint) {
+  if (previous && previous.fingerprint === fingerprint && (keys.length === 0 || hasRenderedContainer)) {
     return;
   }
 
@@ -271,8 +272,10 @@ async function processOpenedEmailHeader() {
   const subjectText = subjectHeader.textContent || "";
   const keys = extractKeys(subjectText);
   const fingerprint = `${subjectText.slice(0, 250)}|${keys.join(",")}`;
+  const headerContainer = document.querySelector('.jira-badge-container--header[data-jira-kind="header"]');
+  const hasRenderedHeaderContainer = !!(headerContainer && headerContainer.previousElementSibling === subjectHeader);
 
-  if (fingerprint === headerFingerprint) {
+  if (fingerprint === headerFingerprint && (keys.length === 0 || hasRenderedHeaderContainer)) {
     return;
   }
 
