@@ -22,6 +22,17 @@
   text-overflow: ellipsis;
 }
 
+.jira-badge:focus-visible {
+  outline: 2px solid #4c9aff;
+  outline-offset: 1px;
+}
+
+.jira-badge--loading {
+  background-color: #f4f5f7;
+  color: #42526e;
+  cursor: default;
+}
+
 
 .jira-badge:hover {
   opacity: 0.85;

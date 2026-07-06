@@ -1,11 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Jira Ticket Badges voor Gmail",
+  "name": "__MSG_extName__",
   "version": "1.1.0",
-  "description": "Toont Jira-ticketstatus als badge in de Gmail-inboxlijst.",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "permissions": ["storage"],
   "host_permissions": [
     "https://mail.google.com/*",
+    "https://calendar.google.com/*",
     "https://*.atlassian.net/*"
   ],
   "background": {
@@ -17,11 +19,17 @@
       "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://calendar.google.com/*"],
+      "js": ["calendar-content.js"],
+      "css": ["calendar-content.css", "content.css"],
+      "run_at": "document_idle"
     }
   ],
   "options_page": "options.html",
   "action": {
-    "default_title": "Jira Ticket Badges instellingen"
+    "default_title": "__MSG_extActionTitle__"
   },
   "icons": {
     "16": "icons/icon16.png",

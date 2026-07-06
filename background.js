@@ -2,7 +2,51 @@
 // Voorkomt CORS-problemen en houdt het API-token uit het content script.
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minuten cache per ticket
-const KEY_REGEX = /^[A-Z][A-Z0-9]{1,9}-\d+$/;
+const ERROR_CACHE_TTL_MS = 30 * 1000; // korte cache voor fouten zodat herstel snel zichtbaar is
+const KEY_REGEX = /^[A-Z]{2,3}-\d+$/;
+const IN_FLIGHT_REQUESTS = new Map();
+
+const ERROR_CODES = {
+  INVALID_KEY: "ERR_INVALID_KEY",
+  NOT_CONFIGURED: "ERR_NOT_CONFIGURED",
+  INVALID_JIRA_URL: "ERR_INVALID_JIRA_URL",
+  NOT_FOUND: "ERR_NOT_FOUND",
+  AUTH_FAILED: "ERR_AUTH_FAILED",
+  HTTP: "ERR_HTTP",
+  NETWORK: "ERR_NETWORK"
+};
+
+function t(key, substitutions) {
+  return chrome.i18n.getMessage(key, substitutions) || key;
+}
+
+function buildError({ key, code, httpStatus }) {
+  if (code === ERROR_CODES.HTTP) {
+    return {
+      ok: false,
+      key,
+      errorCode: code,
+      httpStatus,
+      error: t("errorHttp", [String(httpStatus)])
+    };
+  }
+
+  const messageKeyByCode = {
+    [ERROR_CODES.INVALID_KEY]: "errorInvalidKey",
+    [ERROR_CODES.NOT_CONFIGURED]: "errorNotConfigured",
+    [ERROR_CODES.INVALID_JIRA_URL]: "errorInvalidJiraUrl",
+    [ERROR_CODES.NOT_FOUND]: "errorNotFound",
+    [ERROR_CODES.AUTH_FAILED]: "errorAuthFailed",
+    [ERROR_CODES.NETWORK]: "errorNetwork"
+  };
+
+  return {
+    ok: false,
+    key,
+    errorCode: code,
+    error: t(messageKeyByCode[code] || "errorUnknown")
+  };
+}
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "FETCH_JIRA_ISSUE") {
@@ -22,21 +66,39 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function fetchIssueWithCache(key) {
-  if (!KEY_REGEX.test(key || "")) {
-    return { ok: false, key, error: "Ongeldige key" };
+  const normalizedKey = (key || "").trim().toUpperCase();
+
+  if (!KEY_REGEX.test(normalizedKey)) {
+    return buildError({ key: normalizedKey || key, code: ERROR_CODES.INVALID_KEY });
   }
 
-  const cacheKey = "jira_cache_" + key;
-  const cached = await chrome.storage.local.get(cacheKey);
-  const entry = cached[cacheKey];
-
-  if (entry && Date.now() - entry.timestamp < CACHE_TTL_MS) {
-    return entry.data;
+  if (IN_FLIGHT_REQUESTS.has(normalizedKey)) {
+    return IN_FLIGHT_REQUESTS.get(normalizedKey);
   }
 
-  const data = await fetchIssueFromJira(key);
-  await chrome.storage.local.set({ [cacheKey]: { data, timestamp: Date.now() } });
-  return data;
+  const request = (async () => {
+    const cacheKey = "jira_cache_" + normalizedKey;
+    const cached = await chrome.storage.local.get(cacheKey);
+    const entry = cached[cacheKey];
+
+    if (entry && entry.data) {
+      const ttl = entry.data.ok ? CACHE_TTL_MS : ERROR_CACHE_TTL_MS;
+      if (Date.now() - entry.timestamp < ttl) {
+        return entry.data;
+      }
+    }
+
+    const data = await fetchIssueFromJira(normalizedKey);
+    await chrome.storage.local.set({ [cacheKey]: { data, timestamp: Date.now() } });
+    return data;
+  })();
+
+  IN_FLIGHT_REQUESTS.set(normalizedKey, request);
+  try {
+    return await request;
+  } finally {
+    IN_FLIGHT_REQUESTS.delete(normalizedKey);
+  }
 }
 
 async function clearJiraCache() {
@@ -69,12 +131,12 @@ async function fetchIssueFromJira(key) {
   const settings = await chrome.storage.local.get(["jiraUrl", "jiraEmail", "jiraToken"]);
 
   if (!settings.jiraUrl || !settings.jiraEmail || !settings.jiraToken) {
-    return { ok: false, key, error: "Niet geconfigureerd" };
+    return buildError({ key, code: ERROR_CODES.NOT_CONFIGURED });
   }
 
   const cleanUrl = normalizeJiraUrl(settings.jiraUrl);
   if (!cleanUrl) {
-    return { ok: false, key, error: "Ongeldige Jira-URL" };
+    return buildError({ key, code: ERROR_CODES.INVALID_JIRA_URL });
   }
 
   const endpoint = `${cleanUrl}/rest/api/3/issue/${encodeURIComponent(key)}?fields=summary,status`;
@@ -99,14 +161,14 @@ async function fetchIssueFromJira(key) {
       };
     }
     if (response.status === 404) {
-      return { ok: false, key, error: "Niet gevonden" };
+      return buildError({ key, code: ERROR_CODES.NOT_FOUND });
     }
     if (response.status === 401 || response.status === 403) {
-      return { ok: false, key, error: "Auth mislukt" };
+      return buildError({ key, code: ERROR_CODES.AUTH_FAILED });
     }
-    return { ok: false, key, error: `HTTP ${response.status}` };
+    return buildError({ key, code: ERROR_CODES.HTTP, httpStatus: response.status });
   } catch (err) {
-    return { ok: false, key, error: "Netwerkfout" };
+    return buildError({ key, code: ERROR_CODES.NETWORK });
   }
 }
 
@@ -114,12 +176,12 @@ async function testJiraConnection() {
   const settings = await chrome.storage.local.get(["jiraUrl", "jiraEmail", "jiraToken"]);
 
   if (!settings.jiraUrl || !settings.jiraEmail || !settings.jiraToken) {
-    return { ok: false, error: "Niet geconfigureerd" };
+    return buildError({ code: ERROR_CODES.NOT_CONFIGURED });
   }
 
   const cleanUrl = normalizeJiraUrl(settings.jiraUrl);
   if (!cleanUrl) {
-    return { ok: false, error: "Ongeldige Jira-URL" };
+    return buildError({ code: ERROR_CODES.INVALID_JIRA_URL });
   }
 
   const endpoint = `${cleanUrl}/rest/api/3/myself`;
@@ -143,11 +205,11 @@ async function testJiraConnection() {
     }
 
     if (response.status === 401 || response.status === 403) {
-      return { ok: false, error: "Auth mislukt" };
+      return buildError({ code: ERROR_CODES.AUTH_FAILED });
     }
 
-    return { ok: false, error: `HTTP ${response.status}` };
+    return buildError({ code: ERROR_CODES.HTTP, httpStatus: response.status });
   } catch (err) {
-    return { ok: false, error: "Netwerkfout" };
+    return buildError({ code: ERROR_CODES.NETWORK });
   }
 }

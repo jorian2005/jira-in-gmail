@@ -1,0 +1,206 @@
+{
+  "extName": {
+    "message": "Jira Ticket Badges for Gmail",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Shows Jira issue status badges in the Gmail inbox list.",
+    "description": "Extension description"
+  },
+  "extActionTitle": {
+    "message": "Jira Ticket Badges settings",
+    "description": "Toolbar action title"
+  },
+  "optionsPageTitle": {
+    "message": "Jira Badge settings",
+    "description": "Options page title"
+  },
+  "optionsHeading": {
+    "message": "Jira settings",
+    "description": "Main heading in options"
+  },
+  "optionsSubtitle": {
+    "message": "Connect your Atlassian account and test the connection directly.",
+    "description": "Subtitle in options"
+  },
+  "connectionStatusLabel": {
+    "message": "Connection status:",
+    "description": "Connection label"
+  },
+  "connectionNotChecked": {
+    "message": "Not checked yet",
+    "description": "Initial connection status"
+  },
+  "accountDetailsHeading": {
+    "message": "Account details",
+    "description": "Account section heading"
+  },
+  "labelJiraUrl": {
+    "message": "Jira URL",
+    "description": "Jira URL label"
+  },
+  "placeholderJiraUrl": {
+    "message": "https://yourcompany.atlassian.net",
+    "description": "Jira URL placeholder"
+  },
+  "hintJiraUrl": {
+    "message": "Use only your Jira Cloud URL, without an extra path.",
+    "description": "Jira URL hint"
+  },
+  "labelJiraEmail": {
+    "message": "Atlassian email address",
+    "description": "Email label"
+  },
+  "labelJiraToken": {
+    "message": "API token",
+    "description": "API token label"
+  },
+  "placeholderJiraToken": {
+    "message": "Leave empty to keep existing token",
+    "description": "API token placeholder"
+  },
+  "toggleShowToken": {
+    "message": "Show token",
+    "description": "Token visibility toggle label"
+  },
+  "hintApiToken": {
+    "message": "Find your token in Atlassian Account settings -> Security -> API tokens.",
+    "description": "API token hint"
+  },
+  "buttonSave": {
+    "message": "Save",
+    "description": "Save button"
+  },
+  "buttonTestConnection": {
+    "message": "Test connection",
+    "description": "Test connection button"
+  },
+  "connChecking": {
+    "message": "Checking...",
+    "description": "Connection checking text"
+  },
+  "connConnected": {
+    "message": "Connected",
+    "description": "Connected state"
+  },
+  "connConnectedHint": {
+    "message": "$1 @ $2",
+    "description": "Connected hint displayName and URL",
+    "placeholders": {
+      "displayName": {
+        "content": "$1"
+      },
+      "jiraUrl": {
+        "content": "$2"
+      }
+    }
+  },
+  "connNotConnected": {
+    "message": "Not connected",
+    "description": "Idle state"
+  },
+  "connNotConfiguredHint": {
+    "message": "Fill in URL, email and API token.",
+    "description": "Hint when not configured"
+  },
+  "connFailed": {
+    "message": "Connection failed",
+    "description": "Error state heading"
+  },
+  "validationInvalidUrl": {
+    "message": "Enter a valid Jira URL",
+    "description": "Validation error for URL"
+  },
+  "validationInvalidEmail": {
+    "message": "Enter a valid email address",
+    "description": "Validation error for email"
+  },
+  "statusSavedCacheCleared": {
+    "message": "Saved. Cache cleared ($1).",
+    "description": "Saved status with removed cache count",
+    "placeholders": {
+      "removed": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusSavedCacheClearFailed": {
+    "message": "Saved. Could not clear cache.",
+    "description": "Saved but cache clear failed"
+  },
+  "errorExtensionUnavailable": {
+    "message": "Extension is unavailable",
+    "description": "Runtime extension unavailable error"
+  },
+  "errorNoResponse": {
+    "message": "No response",
+    "description": "No runtime response error"
+  },
+  "errorInvalidKey": {
+    "message": "Invalid key",
+    "description": "Invalid Jira key error"
+  },
+  "errorNotConfigured": {
+    "message": "Not configured",
+    "description": "Missing Jira credentials error"
+  },
+  "errorInvalidJiraUrl": {
+    "message": "Invalid Jira URL",
+    "description": "Invalid Jira URL error"
+  },
+  "errorNotFound": {
+    "message": "Not found",
+    "description": "Jira issue not found error"
+  },
+  "errorAuthFailed": {
+    "message": "Authentication failed",
+    "description": "Jira auth failed error"
+  },
+  "errorHttp": {
+    "message": "HTTP $1",
+    "description": "HTTP status error",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "errorNetwork": {
+    "message": "Network error",
+    "description": "Network error"
+  },
+  "errorUnknown": {
+    "message": "Unknown error",
+    "description": "Fallback unknown error"
+  },
+  "badgeLoadingTitle": {
+    "message": "Loading Jira issue",
+    "description": "Badge loading tooltip"
+  },
+  "badgeLoadingAria": {
+    "message": "$1 loading",
+    "description": "Badge loading aria label",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeErrorAria": {
+    "message": "$1 error: $2",
+    "description": "Badge error aria label",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "calendarSectionTitle": {
+    "message": "Jira status",
+    "description": "Section title shown in Google Calendar event details"
+  }
+}
+

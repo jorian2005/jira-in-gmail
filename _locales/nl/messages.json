@@ -1,0 +1,206 @@
+{
+  "extName": {
+    "message": "Jira Ticket Badges voor Gmail",
+    "description": "Extensienaam"
+  },
+  "extDescription": {
+    "message": "Toont Jira-ticketstatus als badge in de Gmail-inboxlijst.",
+    "description": "Extensiebeschrijving"
+  },
+  "extActionTitle": {
+    "message": "Jira Ticket Badges instellingen",
+    "description": "Titel in toolbar"
+  },
+  "optionsPageTitle": {
+    "message": "Jira Badge instellingen",
+    "description": "Titel van optiespagina"
+  },
+  "optionsHeading": {
+    "message": "Jira-instellingen",
+    "description": "Hoofdtitel in opties"
+  },
+  "optionsSubtitle": {
+    "message": "Koppel je Atlassian-account en test direct of de verbinding werkt.",
+    "description": "Subtitel in opties"
+  },
+  "connectionStatusLabel": {
+    "message": "Verbindingsstatus:",
+    "description": "Label van verbindingsstatus"
+  },
+  "connectionNotChecked": {
+    "message": "Nog niet gecontroleerd",
+    "description": "Initiële verbindingsstatus"
+  },
+  "accountDetailsHeading": {
+    "message": "Accountgegevens",
+    "description": "Titel accountsectie"
+  },
+  "labelJiraUrl": {
+    "message": "Jira-URL",
+    "description": "Label Jira URL"
+  },
+  "placeholderJiraUrl": {
+    "message": "https://jouwbedrijf.atlassian.net",
+    "description": "Placeholder Jira URL"
+  },
+  "hintJiraUrl": {
+    "message": "Alleen Jira Cloud URL, zonder extra pad.",
+    "description": "Hint Jira URL"
+  },
+  "labelJiraEmail": {
+    "message": "Atlassian e-mailadres",
+    "description": "Label e-mailadres"
+  },
+  "labelJiraToken": {
+    "message": "API-token",
+    "description": "Label API-token"
+  },
+  "placeholderJiraToken": {
+    "message": "Laat leeg om te behouden",
+    "description": "Placeholder API-token"
+  },
+  "toggleShowToken": {
+    "message": "Toon token",
+    "description": "Label token zichtbaarheid"
+  },
+  "hintApiToken": {
+    "message": "Vind je token in Atlassian Account settings -> Security -> API tokens.",
+    "description": "Hint API-token"
+  },
+  "buttonSave": {
+    "message": "Opslaan",
+    "description": "Opslaan knop"
+  },
+  "buttonTestConnection": {
+    "message": "Verbinding testen",
+    "description": "Test verbinding knop"
+  },
+  "connChecking": {
+    "message": "Controleren...",
+    "description": "Verbinding controleren tekst"
+  },
+  "connConnected": {
+    "message": "Succesvol gekoppeld",
+    "description": "Verbonden status"
+  },
+  "connConnectedHint": {
+    "message": "$1 @ $2",
+    "description": "Hint bij verbonden displayName en URL",
+    "placeholders": {
+      "displayName": {
+        "content": "$1"
+      },
+      "jiraUrl": {
+        "content": "$2"
+      }
+    }
+  },
+  "connNotConnected": {
+    "message": "Nog niet gekoppeld",
+    "description": "Idle status"
+  },
+  "connNotConfiguredHint": {
+    "message": "Vul URL, e-mail en API-token in.",
+    "description": "Hint als niet geconfigureerd"
+  },
+  "connFailed": {
+    "message": "Koppeling mislukt",
+    "description": "Foutstatus kop"
+  },
+  "validationInvalidUrl": {
+    "message": "Voer een geldige Jira-URL in",
+    "description": "Validatiefout URL"
+  },
+  "validationInvalidEmail": {
+    "message": "Voer een geldig e-mailadres in",
+    "description": "Validatiefout e-mailadres"
+  },
+  "statusSavedCacheCleared": {
+    "message": "Opgeslagen. Cache opgeschoond ($1).",
+    "description": "Opgeslagen bericht met aantal cache items",
+    "placeholders": {
+      "removed": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusSavedCacheClearFailed": {
+    "message": "Opgeslagen. Kon cache niet leegmaken.",
+    "description": "Opgeslagen maar cache legen mislukt"
+  },
+  "errorExtensionUnavailable": {
+    "message": "Extensie niet beschikbaar",
+    "description": "Runtime error extensie niet beschikbaar"
+  },
+  "errorNoResponse": {
+    "message": "Geen response",
+    "description": "Geen runtime response"
+  },
+  "errorInvalidKey": {
+    "message": "Ongeldige key",
+    "description": "Ongeldige Jira key"
+  },
+  "errorNotConfigured": {
+    "message": "Niet geconfigureerd",
+    "description": "Jira credentials ontbreken"
+  },
+  "errorInvalidJiraUrl": {
+    "message": "Ongeldige Jira-URL",
+    "description": "Jira URL ongeldig"
+  },
+  "errorNotFound": {
+    "message": "Niet gevonden",
+    "description": "Issue niet gevonden"
+  },
+  "errorAuthFailed": {
+    "message": "Auth mislukt",
+    "description": "Authenticatie mislukt"
+  },
+  "errorHttp": {
+    "message": "HTTP $1",
+    "description": "HTTP status fout",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "errorNetwork": {
+    "message": "Netwerkfout",
+    "description": "Netwerkfout"
+  },
+  "errorUnknown": {
+    "message": "Onbekende fout",
+    "description": "Fallback onbekende fout"
+  },
+  "badgeLoadingTitle": {
+    "message": "Jira issue wordt geladen",
+    "description": "Tooltip laden badge"
+  },
+  "badgeLoadingAria": {
+    "message": "$1 laden",
+    "description": "Aria label laden badge",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      }
+    }
+  },
+  "badgeErrorAria": {
+    "message": "$1 fout: $2",
+    "description": "Aria label fout badge",
+    "placeholders": {
+      "key": {
+        "content": "$1"
+      },
+      "error": {
+        "content": "$2"
+      }
+    }
+  },
+  "calendarSectionTitle": {
+    "message": "Jira-status",
+    "description": "Sectietitel in Google Calendar eventdetails"
+  }
+}
+

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Jira Badge instellingen</title>
+  <title>Jira Badge settings</title>
   <style>
     :root {
-      --bg: #f6f8fc;
+      --bg: #f5f7fb;
       --card-bg: #ffffff;
       --text: #172b4d;
       --muted: #5e6c84;
@@ -24,23 +24,32 @@
 
     body {
       margin: 0;
-      min-width: 340px;
-      max-width: 420px;
-      padding: 16px;
+      padding: 18px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background: linear-gradient(180deg, #f9fbff 0%, var(--bg) 100%);
       color: var(--text);
     }
 
-    .card {
+    .layout {
+      display: grid;
+      gap: 12px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .panel {
       background: var(--card-bg);
       border: 1px solid #ebedf0;
       border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 6px 20px rgba(9, 30, 66, 0.08);
+      padding: 14px;
+      box-shadow: 0 4px 16px rgba(9, 30, 66, 0.08);
     }
 
-    h3 {
+    h1 {
       margin: 0 0 6px;
       font-size: 18px;
       line-height: 1.25;
@@ -48,15 +57,24 @@
       letter-spacing: 0.2px;
     }
 
-    p {
+    .subtitle {
       margin: 0 0 14px;
       color: var(--muted);
       font-size: 12px;
       line-height: 1.45;
     }
 
+    h2 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #42526e;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
     .connection-status {
-      margin: 0 0 14px;
+      margin: 0;
       padding: 10px 11px;
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -98,13 +116,23 @@
       gap: 10px;
     }
 
+    .field {
+      display: grid;
+      gap: 4px;
+    }
+
     label {
       display: block;
-      margin-top: 2px;
       font-size: 12px;
       font-weight: 700;
       color: #42526e;
       letter-spacing: 0.2px;
+    }
+
+    .hint {
+      margin: 0;
+      font-size: 11px;
+      color: var(--muted);
     }
 
     input {
@@ -133,8 +161,31 @@
       box-shadow: 0 0 0 3px var(--focus);
     }
 
+    .inline-control {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 4px;
+      color: #42526e;
+      font-size: 12px;
+    }
+
+    .inline-control input {
+      width: auto;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      accent-color: var(--primary);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
     button {
-      margin-top: 6px;
       padding: 10px 14px;
       border: none;
       border-radius: 8px;
@@ -144,6 +195,16 @@
       font-weight: 700;
       cursor: pointer;
       transition: background-color 0.18s ease, transform 0.12s ease;
+    }
+
+    .button-secondary {
+      background: #f4f5f7;
+      color: #253858;
+      border: 1px solid #dfe1e6;
+    }
+
+    .button-secondary:hover {
+      background: #ebecf0;
     }
 
     button:hover {
@@ -159,12 +220,25 @@
       box-shadow: 0 0 0 3px var(--focus);
     }
 
+    button:disabled {
+      opacity: 0.7;
+      cursor: default;
+      transform: none;
+    }
+
     #status {
-      margin-top: 12px;
       min-height: 18px;
       font-size: 12px;
       font-weight: 600;
       color: var(--success);
+    }
+
+    .status-error {
+      color: var(--danger) !important;
+    }
+
+    .status-ok {
+      color: var(--success) !important;
     }
 
     @media (max-width: 370px) {
@@ -173,34 +247,63 @@
         padding: 12px;
       }
 
-      .card {
+      .panel {
         padding: 12px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .actions button {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h3>Jira-instellingen</h3>
-    <p>Gebruik een Atlassian API-token (Account settings -> Security -> API tokens).</p>
-    <div id="connection-status" class="connection-status" data-state="idle">
-      <span class="connection-status__label">Verbindingsstatus:</span>
-      <span id="connection-status-value" class="connection-status__value">Nog niet gecontroleerd</span>
-      <div id="connection-status-hint" class="connection-status__hint"></div>
-    </div>
-    <form id="settings-form">
-      <label for="jiraUrl">Jira-URL</label>
-      <input id="jiraUrl" placeholder="https://jouwbedrijf.atlassian.net" autocomplete="url" />
+  <div class="layout">
+    <section class="panel">
+      <h1 data-i18n="optionsHeading">Jira-instellingen</h1>
+      <p class="subtitle" data-i18n="optionsSubtitle">Koppel je Atlassian-account en test direct of de verbinding werkt.</p>
+      <div id="connection-status" class="connection-status" data-state="idle">
+        <span class="connection-status__label" data-i18n="connectionStatusLabel">Verbindingsstatus:</span>
+        <span id="connection-status-value" class="connection-status__value" data-i18n="connectionNotChecked">Nog niet gecontroleerd</span>
+        <div id="connection-status-hint" class="connection-status__hint"></div>
+      </div>
+    </section>
 
-      <label for="jiraEmail">Atlassian e-mailadres</label>
-      <input id="jiraEmail" autocomplete="email" />
+    <section class="panel">
+      <h2 data-i18n="accountDetailsHeading">Accountgegevens</h2>
+      <form id="settings-form">
+        <div class="field">
+          <label for="jiraUrl" data-i18n="labelJiraUrl">Jira-URL</label>
+          <input id="jiraUrl" placeholder="https://jouwbedrijf.atlassian.net" autocomplete="url" data-i18n-placeholder="placeholderJiraUrl" />
+          <p class="hint" data-i18n="hintJiraUrl">Alleen Jira Cloud URL, zonder extra pad.</p>
+        </div>
 
-      <label for="jiraToken">API-token</label>
-      <input id="jiraToken" type="password" placeholder="Laat leeg om te behouden" autocomplete="off" />
+        <div class="field">
+          <label for="jiraEmail" data-i18n="labelJiraEmail">Atlassian e-mailadres</label>
+          <input id="jiraEmail" autocomplete="email" />
+        </div>
 
-      <button id="save" type="submit">Opslaan</button>
-    </form>
-    <div id="status"></div>
+        <div class="field">
+          <label for="jiraToken" data-i18n="labelJiraToken">API-token</label>
+          <input id="jiraToken" type="password" placeholder="Laat leeg om te behouden" autocomplete="off" data-i18n-placeholder="placeholderJiraToken" />
+          <label class="inline-control" for="toggleTokenVisibility">
+            <input id="toggleTokenVisibility" type="checkbox" />
+            <span data-i18n="toggleShowToken">Toon token</span>
+          </label>
+          <p class="hint" data-i18n="hintApiToken">Vind je token in Atlassian Account settings -> Security -> API tokens.</p>
+        </div>
+
+        <div class="actions">
+          <button id="save" type="submit" data-i18n="buttonSave">Opslaan</button>
+          <button id="test-connection" type="button" class="button-secondary" data-i18n="buttonTestConnection">Verbinding testen</button>
+        </div>
+      </form>
+      <div id="status" class="status-ok" aria-live="polite"></div>
+    </section>
   </div>
 
   <script src="options.js"></script>

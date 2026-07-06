@@ -1,100 +1,165 @@
-# Jira Gmail Badge (Chrome Extension)
+# Jira Mail & Calendar Badges (Chrome Extension)
 
-Deze extensie toont Jira-ticket badges direct in je Gmail inboxregels zodra er een issue key in onderwerp/snippet staat (bijv. `PROJ-123`).
+This extension adds Jira issue badges to Gmail and Google Calendar whenever an issue key is detected (for example, `ABC-123`). It is designed for Jira Cloud and runs entirely in your browser as a Manifest V3 extension.
 
-## Wat doet het?
+## Features
 
-- Scant zichtbare Gmail-inboxrijen op Jira keys.
-- Vraagt issue data op via de background service worker (niet vanuit de pagina zelf).
-- Toont per gevonden key een badge met issue-status.
-- Op klik opent de badge het issue in Jira.
-- Gebruikt lokale cache (5 minuten) om API-calls te beperken.
+- Scans visible Gmail message rows for Jira keys.
+- Scans opened Google Calendar events for Jira keys and injects a Jira status section.
+- Fetches Jira data through the extension service worker (avoids page-level CORS issues).
+- Shows status badges with click-through links to Jira issues.
+- Caches issue responses locally for 5 minutes to reduce Jira API calls.
+- Uses browser language via Chrome i18n (`en` and `nl` locales included).
 
-## Vereisten
+## Requirements
 
-- Google Chrome of Chromium-gebaseerde browser met ondersteuning voor Manifest V3.
-- Gmail op `https://mail.google.com/*`.
-- Jira Cloud account op `*.atlassian.net`.
-- Atlassian API-token.
+- Google Chrome or another Chromium-based browser with Manifest V3 support.
+- Gmail at `https://mail.google.com/*`.
+- Google Calendar at `https://calendar.google.com/*`.
+- A Jira Cloud account on `*.atlassian.net`.
+- An Atlassian API token.
 
-## Installatie (developer mode)
+## How it works
 
-1. Download of clone deze map lokaal.
-2. Open Chrome en ga naar `chrome://extensions`.
-3. Zet **Developer mode** aan (rechtsboven).
-4. Klik **Load unpacked**.
-5. Selecteer de map `jira-gmail-badge`.
-6. De extensie verschijnt nu in je extensielijst.
+1. Gmail and Calendar content scripts detect matching issue keys.
+2. Content scripts send messages to `background.js`.
+3. The service worker reads Jira credentials from `chrome.storage.local`.
+4. The service worker calls Jira REST API (`/rest/api/3/issue/{key}`) and caches the result.
+5. Content scripts render badges in the page.
 
-## Configuratie
+This architecture keeps credentials out of page context and prevents direct page CORS problems.
 
-1. Open de extensie-instellingen:
-   - `chrome://extensions` -> zoek **Jira Ticket Badges voor Gmail** -> **Details** -> **Extension options**.
-2. Vul in:
-   - **Jira-URL**: bijv. `https://jouwbedrijf.atlassian.net`
-   - **Atlassian e-mailadres**
-   - **API-token**
-3. Klik **Opslaan**.
-4. De cache wordt automatisch leeggemaakt zodat nieuwe instellingen direct actief zijn.
+## Installation (developer mode)
 
-## Gebruik
+1. Download or clone this folder locally.
+2. Open Chrome and go to `chrome://extensions`.
+3. Enable **Developer mode** (top-right).
+4. Click **Load unpacked**.
+5. Select the `jira-gmail-badge` folder.
+6. The extension will appear in your extension list.
 
-1. Open Gmail inbox (of refresh Gmail-tab).
-2. Zorg dat in onderwerp/snippet een Jira key staat (zoals `ABC-123`).
-3. Je ziet naast de afzendernaam een badge zoals:
-   - `ABC-123 - In Progress`
-4. Klik op de badge om het issue in Jira te openen.
+## Configuration
 
-## Jira API-token aanmaken
+1. Open extension settings:
+   - `chrome://extensions` -> find **Jira Ticket Badges for Gmail** -> **Details** -> **Extension options**.
+2. Fill in:
+   - **Jira URL** (for example `https://yourcompany.atlassian.net`)
+   - **Atlassian email address**
+   - **API token**
+3. Click **Save**.
+4. Cache is cleared automatically so new settings become active right away.
 
-1. Ga naar Atlassian Account Security.
-2. Maak een nieuw API token aan.
-3. Kopieer het token en plak dit in de extensie-opties.
+## Key format
 
-> Tip: laat het tokenveld leeg bij opslaan als je het bestaande token wilt behouden.
+- Supported key pattern is strictly: 2 or 3 uppercase letters + `-` + digits.
+- Examples: `AB-123`, `ABC-123`.
+- Maximum displayed keys:
+  - Gmail row: 3 keys
+  - Calendar event: 3 keys
 
-## Bekende limieten
+## Usage
 
-- De extensie leest maximaal 3 unieke Jira keys per inboxrij.
-- Key-pattern: `A-Z` + cijfers mogelijk in projectdeel, vorm zoals `PROJ-123`.
-- Extensie werkt op Gmail web UI; niet in mobiele apps.
+1. Open Gmail or Google Calendar (refresh tab after install/update).
+2. Make sure the message or event contains a Jira key like `AB-123` or `ABC-123`.
+3. The extension shows Jira badges with status information.
+4. Click a badge to open the issue in Jira.
+
+## Permissions
+
+- `storage`: stores Jira URL, email, token, and cache entries.
+- `host_permissions`:
+  - `https://mail.google.com/*`
+  - `https://calendar.google.com/*`
+  - `https://*.atlassian.net/*`
+
+No remote analytics, tracking, or telemetry is included.
+
+## Create a Jira API token
+
+1. Open Atlassian Account Security settings.
+2. Create a new API token.
+3. Copy the token and paste it into extension options.
+
+> Tip: leave the token field empty when saving if you want to keep the currently stored token.
+
+## Known limits
+
+- The extension reads a maximum of 3 unique Jira keys per Gmail row or Calendar event.
+- Key pattern: 2 or 3 letters + `-` + digits, for example `AB-123` or `ABC-123`.
+- The extension works on Gmail/Calendar web UI, not in mobile apps.
+
+## Localization
+
+- Locales live in `_locales/en/messages.json` and `_locales/nl/messages.json`.
+- `manifest.json` uses `default_locale` and `__MSG_*__` placeholders.
+- UI text in options/content scripts is resolved with `chrome.i18n.getMessage(...)`.
 
 ## Troubleshooting
 
-- **Geen badges zichtbaar**
-  - Controleer of je op `https://mail.google.com` zit.
-  - Herlaad de Gmail-tab na installeren of na configuratiewijzigingen.
-  - Controleer of de mailtekst echt een Jira key bevat.
+- **No badges are visible**
+  - Check that you are on `https://mail.google.com` or `https://calendar.google.com`.
+  - Reload the tab after installing or changing settings.
+  - Verify the text actually contains a valid Jira key.
 
-- **Badge met waarschuwing**
-  - Open extension options en controleer URL/e-mail/token.
-  - `Auth mislukt`: token onjuist of geen toegang tot issue.
-  - `Niet gevonden`: issue key bestaat niet of project is niet zichtbaar voor dit account.
-  - `Netwerkfout`: tijdelijke netwerk- of Jira-bereikbaarheidsfout.
+- **Badge shows an error**
+  - Open extension options and verify URL/email/token.
+  - `Authentication failed`: token is incorrect or the account has no access.
+  - `Not found`: issue key does not exist or is not visible to this account.
+  - `Network error`: temporary network or Jira availability issue.
 
-- **Wijzigingen lijken niet direct door te komen**
-  - Sla opties opnieuw op (cache wordt geleegd).
-  - Herlaad Gmail.
+- **Changes do not appear immediately**
+  - Save options again (this clears cache).
+  - Reload the Gmail/Calendar tab.
 
-## Ontwikkeling
+- **Extension page or script is blocked by CSP**
+  - Do not use inline JavaScript in extension pages.
+  - Use external `.js` files referenced with `<script src="..."></script>`.
 
-Projectstructuur:
+## Development
 
-- `manifest.json` - extensieconfiguratie (MV3)
-- `background.js` - service worker; Jira API-calls + cache
-- `content.js` - Gmail DOM scan + badge injectie
-- `content.css` - badge styling
-- `options.html` / `options.js` - instellingenpagina
+Project structure:
 
-## Veiligheid en privacy
+- `manifest.json` - extension configuration (MV3)
+- `background.js` - service worker; Jira API calls + cache
+- `content.js` - Gmail DOM scan + badge injection
+- `calendar-content.js` - Google Calendar DOM scan + Jira section injection
+- `content.css` / `calendar-content.css` - badge and Calendar section styling
+- `options.html` / `options.js` - settings page
+- `_locales/` - translations (`en`, `nl`)
 
-- Jira-credentials worden opgeslagen in `chrome.storage.local` op je eigen browserprofiel.
-- API-calls naar Jira gebeuren alleen vanuit de extensie-service-worker.
-- Er wordt geen externe analytics of tracking gebruikt in deze codebase.
+## Testing
 
-## Updaten na codewijzigingen
+This repository includes a Node test suite that validates:
 
-1. Ga naar `chrome://extensions`.
-2. Klik bij de extensie op **Reload**.
-3. Herlaad je Gmail-tab.
+- manifest structure and referenced files
+- regex consistency across scripts
+- locale key parity (`en` vs `nl`)
+
+Run locally:
+
+```bash
+npm test
+```
+
+## GitHub Actions
+
+CI runs tests on push and pull requests via `.github/workflows/test.yml`.
+
+Current workflow:
+
+- checks out the repository
+- uses Node.js 20
+- runs `npm test`
+
+## Security and privacy
+
+- Jira credentials are stored in `chrome.storage.local` in your own browser profile.
+- Jira API calls are made only from the extension service worker.
+- No external analytics or tracking is included.
+
+## Reload after code changes
+
+1. Go to `chrome://extensions`.
+2. Click **Reload** on the extension.
+3. Reload your Gmail/Calendar tab.
 
